@@ -15,7 +15,7 @@ ee.Initialize()
     # 3-
 
 def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
-               stats = ['mean', 'median'], cfmask_val = [0]):
+               stats = ['mean', 'median'], cfmask_val = 0):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
 
@@ -41,6 +41,13 @@ def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
     Returns:
         dict: A dictionary representation of the json data returned by the gee platform.
     """
+    # Define some internal functions to be mapped over imageCollections
+    def _mask_clouds(image):
+        """Cloud masking function"""
+        invalid = image.select('cfmask').neq(cfmask_val)
+        return image.mask(invalid.Not())
+
+    # Check inputs
     if sensor not in ['LT4', 'LT5', 'LC8', 'LE7']:
         raise ValueError('Unknown sensor (Must be one of LT4, LT5, LE7, LC8)')
     if bands is None:
@@ -52,7 +59,7 @@ def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
     # Prepare image collection
     landsat = ee.ImageCollection(sensor).\
             filterDate(start=start, opt_end=end)\
-            .map(_cfmask_filter)\
+            .map(_mask_clouds)\
             .select(bands)
     geometry = ee.Geometry.Point(lon, lat)
     if radius is not None:
