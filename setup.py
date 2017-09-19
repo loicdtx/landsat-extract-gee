@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import itertools
 
-# Parse the version from the satmo module.
+# Parse the version from the geextract module.
 with open('geextract/__init__.py') as f:
     for line in f:
         if line.find("__version__") >= 0:

@@ -6,13 +6,29 @@ import ee
 import sqlite3
 import pandas as pd
 import csv
+import re
+from datetime import datetime
 
 ee.Initialize()
 
-# Plan:
-    # 1-ts_extract
-    # 2-json2db
-    # 3-
+
+def get_date(filename):
+    """Retriev date information from typical Landsat filenames
+
+    Args:
+        filename (str): Landsat file name
+
+    Returns:
+        datetime.date : The corresponding date of the filename.
+
+    Examples:
+        >>> import geextract
+        >>> geextract.get_date('LC81970292013106')
+    """
+    pattern = re.compile(r'(?P<sensor>LC8|LE7|LT5|LT4)(?P<pathrow>\d{6})(?P<date>\d{7})')
+    m = pattern.search(filename)
+    d = datetime.strptime(m.group('date'), '%Y%j').date()
+    return d
 
 def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
                stats = 'mean', cfmask_val = 0):
@@ -24,8 +40,8 @@ def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
         lat (float): Center latitude in decimal degree
         sensor (str): Landsat sensor to query data from. Must be one of 'LT4',
             'LT5', 'LE7', 'LC8'
-        start (datetime.date): Start date
-        end (datetime.date): Optional end date; automatically set as today if unset
+        start (datetime.datetime): Start date
+        end (datetime.datetime): Optional end date; automatically set as today if unset
         radius (float): Optional radius around center point in meters. If unset,
             time-series of a single pixel are queried. Otherwise a reducer is used
             to spatially aggregate the pixels intersecting the circular feature
@@ -83,33 +99,84 @@ def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
             # FEature needs to be rebuilt because the backend doesn't accept to map
             # functions that return dictionaries
             return ee.Feature(None, stat_dict)
-        out = landsat.filterBounds(geometry).map(_reduce_region)
+        fc = landsat.filterBounds(geometry).map(_reduce_region).getInfo()
+        out = simplify(fc)
     else:
         # Extraction with a point, no spatial aggregation, etc
         geometry = ee.Geometry.Point(lon, lat)
-        out = landsat.filterBounds(geometry).getRegion(geometry, 30)
-    return out.getInfo()
+        l = landsat.filterBounds(geometry).getRegion(geometry, 30).getInfo()
+        out = dictify(l)
+    return out
 
-    # col = ee.ImageCollection(product).\
-    # select(bands).\
-    # filterDate(start_date, end_date)
-# 
-    # data = col.getRegion(geometry, int(res)).getInfo()
-# 
-# 
-# def dict2db(in_dict, con, name):
-# df = pd.DataFrame.from_records(data[1:])
-# df.columns = data[0]
-# con = sqlite3.connect(db_src)
-# df.to_sql(name=table_name, con=con, if_exists='append')
+def simplify(fc):
+    """Take a feature collection, as returned by mapping a reducer to a ImageCollection,
+        and reshape it into a simpler list of dictionaries
 
-from pprint import pprint
-import datetime
+    Args:
+        fc (dict): Dictionary representation of a feature collection, as returned
+            by mapping a reducer to an ImageCollection
 
-a = ts_extract(3, 45, 'LC8', start = '2010-01-01', end = '2017-09-18',
-               radius = 2000)
-pprint(a)
+    Returns:
+        list: A list of dictionaries.
 
-b = ts_extract(3, 45, 'LC8', start = '2010-01-01', end = '2017-09-18')
-pprint(b)
+    Examples:
+        >>> fc = {u'columns': {},
+        ...       u'features': [{u'geometry': None,
+        ...                      u'id': u'LC81970292013106',
+        ...                      u'properties': {u'B1': 651.8054424353023,
+        ...                                      u'B2': 676.6018246419446},
+        ...                      u'type': u'Feature'},
+        ...                     {u'geometry': None,
+        ...                      u'id': u'LC81970292013122',
+        ...                      u'properties': {u'B1': 176.99323997958842,
+        ...                                      u'B2': 235.83196553144882},
+        ...                      u'type': u'Feature'}]}
+        >>> simplify(fc)
+    """
+    def feature2dict(f):
+        id = f['id']
+        out = f['properties']
+        out.update(id=id)
+        return out
+    out = [feature2dict(x) for x in fc['features']]
+    return out
+
+def dictify(x):
+    """Build a list of dictionaries from a list of lists as returned by running
+        getRegion on an Image collection
+
+    Args:
+        x (list): A list of list. First list element contain the keys while following
+            list elements contain values.
+
+    Returns:
+        list: A list of dictionaries
+
+    Examples:
+        >>> l = [[u'id', u'B1', u'B2', u'B3', u'B7'],
+        ...      [u'LC81970292013106', 649, 683, 910, 1365],
+        ...      [u'LC81970292013122', 140, 191, 521, 965]]
+        >>> dictify(l)
+    """
+    out = [dict(zip(x[0], values)) for values in x[1:]]
+    return out
+
+def date_append(dl):
+    pass
+
+def dictlist2sqlite(dl, db_src, table):
+    """Write a list of dictionaries to a sqlite database
+
+    Args:
+        dl (list): List of dictionaries
+        db_src (str): Path an sqlite database (created in case it does not exist)
+        table (str): Name of database table to write data
+
+    Returns:
+        This function is used for its side effect of writing data to a database;
+            it does not return anything
+    """
+    df = pd.Dataframe(dl)
+    con = sqlite3.connect(db_src)
+    df.to_sql(name=table, con=con, if_exists='append')
 
