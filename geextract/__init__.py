@@ -5,7 +5,6 @@ __version__ = "0.1"
 import ee
 import sqlite3
 import pandas as pd
-import csv
 import re
 from datetime import datetime
 
