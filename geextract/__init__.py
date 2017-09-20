@@ -29,7 +29,7 @@ def get_date(filename):
     d = datetime.strptime(m.group('date'), '%Y%j').date()
     return d
 
-def ts_extract(lon, lat, sensor, start, end = None, radius = None, bands = None,
+def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, bands = None,
                stats = 'mean', cfmask_val = 0):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
@@ -175,7 +175,7 @@ def dictlist2sqlite(dl, db_src, table):
         This function is used for its side effect of writing data to a database;
             it does not return anything
     """
-    df = pd.Dataframe(dl)
+    df = pd.DataFrame(dl)
     con = sqlite3.connect(db_src)
     df.to_sql(name=table, con=con, if_exists='append')
 
