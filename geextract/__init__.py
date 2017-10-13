@@ -57,25 +57,27 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
         dict: A dictionary representation of the json data returned by the gee platform.
     """
     # Define some internal functions to be mapped over imageCollections
-    def _mask_clouds(image):
-        """Cloud masking function"""
-        invalid = image.select('cfmask').neq(cfmask_val)
-        return image.mask(invalid.Not())
-
-
+    def _mask_clouds_cfmask(image):
+        return image.updateMask(image.select('cfmask').neq(cfmask_val).Not())
+    def _mask_clouds_pixel_qa(image):
+        return image.updateMask(image.select('pixel_qa').bitwiseAnd(2).neq(cfmask_val))
+    
+    #Remove surface reflectance values higher than 10000
+    def _mask_SR_outlier(image):
+        return image.updateMask(image.lte(10000)\
+		.And(image.gte(0)))
+    
     # Check inputs
-    if sensor not in ['LT4', 'LT5', 'LC8', 'LE7']:
-        raise ValueError('Unknown sensor (Must be one of LT4, LT5, LE7, LC8)')
+    if sensor not in ['LT04/C01/T1', 'LT05/C01/T1', 'LE07/C01/T1', 'LC8']:
+        raise ValueError('Unknown sensor (Must be one of LT04/C01/T1, LT05/C01/T1, LE07/C01/T1, LC8)')
     if bands is None:
-        if sensor in ['LT4', 'LT5', 'LE7']:
-            bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B7']
-        else:
-            bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
+        bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
     sensor = 'LANDSAT/%s_SR' % sensor
     # Prepare image collection
     landsat = ee.ImageCollection(sensor).\
             filterDate(start=start, opt_end=end)\
-            .map(_mask_clouds)\
+            .map(_mask_clouds_cfmask if "LC8" in sensor else _mask_clouds_pixel_qa)\
+            .map(_mask_SR_outlier)\
             .select(bands)
     if radius is not None:
         # Define spatial aggregation function
@@ -176,6 +178,6 @@ def dictlist2sqlite(dl, db_src, table):
             it does not return anything
     """
     df = pd.DataFrame(dl)
-    con = sqlite3.connect(db_src)
+    con = sqlite3.connect(db_src, check_same_thread = False)
     df.to_sql(name=table, con=con, if_exists='append')
 
