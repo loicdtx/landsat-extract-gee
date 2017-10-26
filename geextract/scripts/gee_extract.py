@@ -1,24 +1,28 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import argparse
 from datetime import datetime
 from geextract import ts_extract, dictlist2sqlite
 
-def main(lon, lat, sensor, start, end, radius, bands, stats, cfmask_val, db,
+def main(lon, lat, sensor, begin, end, radius, bands, stats, collection, db,
          table):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
+    # Collection can be a string or an integer, prepare input type for passing to ts_extract
+    if collection.isdigit():
+        collection = int(collection)
     # Extract data
-    dict_list = ts_extract(lon=lon, lat=lat, sensor=sensor, start=start, end=end,
+    dict_list = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
                            radius=radius, bands=bands, stats=stats,
-                           cfmask_val=cfmask_val)
-    pprint('Extracted %d records from Google Eath Engine' % len(dict_list))
+                           collection=collection)
+    print('Extracted %d records from Google Eath Engine' % len(dict_list))
     # Write to db
     dictlist2sqlite(dict_list, db, table)
 
 if __name__ == '__main__':
-    epilog = ("""
+    epilog = """
 Command line utility to extract Lansat surface reflectance data from the google earth
 engine platform and write the output to a local sqlite database. Query can be done for
 a single pixel, or for a circular region, in which case data are spatially aggregated
@@ -32,7 +36,9 @@ Example usage
 --------------------------
 # Extract all the LT5 bands for a location in Yucatan for the entire Landsat period, with a 500m radius
 gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -table uxmal
-""")
+# Order pre-collection data
+gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -table uxmal_pre -col pre
+"""
 
 
     parser = argparse.ArgumentParser(epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -43,9 +49,9 @@ gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
     parser.add_argument('-table', '--table', required=True,
                         help='Database table name to write data. Existing tables will be appended')
 
-    parser.add_argument('-cfmask', '--cfmask_val', type=int, required=False,
-                        help='Value to keep from the masking step with cfmask')
-    parser.set_defaults(cfmask_val=0)
+    parser.add_argument('-col', '--collection', type=str, required=False,
+                        help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
+    parser.set_defaults(collection='1')
 
     parser.add_argument('-bands', '--bands', nargs='*', required=False,
                        help='Landsat spectral bands to include in the output. Defaults to all bands (different for LC8 and the other sensors)')
