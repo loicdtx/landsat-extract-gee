@@ -1,6 +1,6 @@
 """geextract"""
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 import ee
 import sqlite3
@@ -37,7 +37,7 @@ def get_date(filename):
     return d
 
 def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, bands = None,
-               stats = 'mean', cfmask_val = 0):
+               stats = 'mean', collection = 1):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
 
@@ -57,18 +57,41 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] otherwise.
         stats (str): Spatial aggregation function to use. Only relevant
             if a radius value is set.
-        cfmask_val (int): Value of the cfmask band corresponding to valid pixels.
-            Defaults to 0.
+        collection (str or int): Landsat collection. 'pre' for pre-collection,
+            1 for collection 1 (default)
 
     Returns:
         dict: A dictionary representation of the json data returned by the gee platform.
+
+    Example:
+        >>> import geextract
+        >>> from pprint import pprint
+        >>> from datetime import datetime
+
+        >>> lon = -89.8107197
+        >>> lat = 20.4159611
+
+        >>> out = geextract.ts_extract(lon=lon, lat=lat, sensor='LE7', start=datetime(1980, 1, 1, 0, 0),
+        >>>                            radius=500)
+        >>> pprint(out)
+
     """
     # Define some internal functions to be mapped over imageCollections
     def _mask_clouds(image):
         """Cloud masking function"""
-        invalid = image.select('cfmask').neq(cfmask_val)
-        return image.mask(invalid.Not())
+        # collection 1 cloud masking example
+        # https://code.earthengine.google.com/52e39cc00de3471c905509e374c52284
 
+        # Pre collecction masking example
+        # https://code.earthengine.google.com/37ffd688d1b2d2c977fa5c536a023356
+        # collection must be a variable of the parent environment
+        if collection == 1:
+            clear = image.select('pixel_qa').bitwiseAnd(0x2).neq(0)
+        elif collection == 'pre':
+            clear = image.select('cfmask').eq(0)
+        else:
+            raise ValueError('Unsupported collection')
+        return image.mask(clear)
 
     # Check inputs
     if sensor not in ['LT4', 'LT5', 'LC8', 'LE7']:
@@ -78,7 +101,13 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
             bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B7']
         else:
             bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
-    sensor = 'LANDSAT/%s_SR' % sensor
+    if collection == 'pre':
+        sensor = 'LANDSAT/%s_SR' % sensor
+    elif collection == 1:
+        sensor = re.sub(r'(LC|LT|LE)(\d{1})', r'\g<1>0\g<2>', sensor)
+        sensor = 'LANDSAT/%s/C01/T1_SR' % sensor
+    else:
+        raise ValueError('Unsupported collection')
     # Prepare image collection
     landsat = ee.ImageCollection(sensor).\
             filterDate(start=start, opt_end=end)\
