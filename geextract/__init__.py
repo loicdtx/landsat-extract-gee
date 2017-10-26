@@ -24,9 +24,16 @@ def get_date(filename):
         >>> import geextract
         >>> geextract.get_date('LC81970292013106')
     """
-    pattern = re.compile(r'(?P<sensor>LC8|LE7|LT5|LT4)(?P<pathrow>\d{6})(?P<date>\d{7})')
-    m = pattern.search(filename)
-    d = datetime.strptime(m.group('date'), '%Y%j').date()
+    p0 = re.compile(r'(?P<sensor>LC8|LE7|LT5|LT4)(?P<pathrow>\d{6})(?P<date>\d{7})')
+    p1 = re.compile(r'(?P<sensor>LC08|LE07|LT04|LT05)_(?P<pathrow>\d{6})_(?P<date>\d{8})')
+    if p0.search(filename):
+        m = p0.search(filename)
+        d = datetime.strptime(m.group('date'), '%Y%j').date()
+    elif p1.search(filename):
+        m = p1.search(filename)
+        d = datetime.strptime(m.group('date'), '%Y%m%d').date()
+    else:
+        raise ValueError('Unknown pattern')
     return d
 
 def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, bands = None,
