@@ -91,7 +91,8 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
             clear = image.select('cfmask').eq(0)
         else:
             raise ValueError('Unsupported collection')
-        return image.mask(clear)
+        valid_range_mask = image.gte(0).And(image.lte(10000))
+        return image.updateMask(clear).updateMask(valid_range_mask)
 
     # Check inputs
     if sensor not in ['LT4', 'LT5', 'LC8', 'LE7']:
