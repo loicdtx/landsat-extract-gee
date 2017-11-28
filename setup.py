@@ -27,6 +27,7 @@ setup(name='geextract',
       install_requires=[
           'pandas',
           'earthengine-api'],
-      scripts=['geextract/scripts/gee_extract.py'],
+      scripts=['geextract/scripts/gee_extract.py',
+               'geextract/scripts/gee_extract_batch.py'],
       test_suite="tests",
       extras_require=extra_reqs)
