@@ -36,7 +36,7 @@ def get_date(filename):
         raise ValueError('Unknown pattern')
     return d
 
-def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None,
+def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), radius = None,
                feature = None, bands = None, stats = 'mean', collection = 1):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
