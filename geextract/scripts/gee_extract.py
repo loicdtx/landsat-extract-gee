@@ -43,31 +43,6 @@ gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
 
     parser = argparse.ArgumentParser(epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument('-db', '--db', required=True,
-                        help='Path to sqlite database. Will be created if does not exist')
-
-    parser.add_argument('-table', '--table', required=True,
-                        help='Database table name to write data. Existing tables will be appended')
-
-    parser.add_argument('-col', '--collection', type=str, required=False,
-                        help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
-    parser.set_defaults(collection='1')
-
-    parser.add_argument('-bands', '--bands', nargs='*', required=False,
-                       help='Landsat spectral bands to include in the output. Defaults to all bands (different for LC8 and the other sensors)')
-    parser.set_defaults(bands=None)
-
-    parser.add_argument('-stats', '--stats', required=False,
-                        help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
-    parser.set_defaults(stats='mean')
-
-    parser.add_argument('-r', '--radius', type=float, required=False,
-                        help='Optional circular radius in meters around center point')
-    parser.set_defaults(radius=None)
-
-    parser.add_argument('-s', '--sensor', required=True,
-                        help='Landsat sensor to query; one of LT4, LT5, LE7, LC8')
-
     parser.add_argument('-lat', '--lat',
                         required=True,
                         type=float,
@@ -86,6 +61,32 @@ gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
                         required = False,
                         help = 'Posterior time-range boundary in yyyy-mm-dd')
     parser.set_defaults(end=datetime.today().date().strftime('%Y-%m-%d'))
+
+    parser.add_argument('-db', '--db', required=True,
+                        help='Path to sqlite database. Will be created if does not exist')
+
+    parser.add_argument('-table', '--table', required=True,
+                        help='Database table name to write data. Existing tables will be appended')
+
+    parser.add_argument('-r', '--radius', type=float, required=False,
+                        help='Optional circular radius in meters around center point')
+    parser.set_defaults(radius=None)
+
+    parser.add_argument('-s', '--sensor', required=True,
+                        help='Landsat sensor to query; one of LT4, LT5, LE7, LC8')
+
+    parser.add_argument('-stats', '--stats', required=False,
+                        help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
+    parser.set_defaults(stats='mean')
+
+    parser.add_argument('-col', '--collection', type=str, required=False,
+                        help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
+    parser.set_defaults(collection='1')
+
+    parser.add_argument('-bands', '--bands', nargs='*', required=False,
+                       help='Landsat spectral bands to include in the output. Defaults to all bands (different for LC8 and the other sensors)')
+    parser.set_defaults(bands=None)
+
 
     parsed_args = parser.parse_args()
 
