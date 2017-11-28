@@ -36,8 +36,8 @@ def get_date(filename):
         raise ValueError('Unknown pattern')
     return d
 
-def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, bands = None,
-               stats = 'mean', collection = 1):
+def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None,
+               feature = None, bands = None, stats = 'mean', collection = 1):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
 
@@ -52,6 +52,10 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
             time-series of a single pixel are queried. Otherwise a reducer is used
             to spatially aggregate the pixels intersecting the circular feature
             built.
+        feature (dict): Optional dictionary representation of a polygon feature
+            in longlat CRS. If unset, time-series of a single pixel are queried.
+            Otherwise a reducer is used to spatially aggregate the pixels intersecting
+            the given feature.
         bands (list): List of Landsat band names. Optional, defaults to
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] in the case of LC8 sensor and to
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] otherwise.
@@ -114,7 +118,7 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
             filterDate(start=start, opt_end=end)\
             .map(_mask_clouds)\
             .select(bands)
-    if radius is not None:
+    if radius is not None or feature is not None:
         # Define spatial aggregation function
         if stats == 'mean':
             fun = ee.Reducer.mean()
@@ -127,7 +131,10 @@ def ts_extract(lon, lat, sensor, start, end = datetime.today(), radius = None, b
         else:
             raise ValueError('Unknown spatial aggregation function. Must be one of mean, median, max, or min')
 
-        geometry = ee.Geometry.Point(lon, lat).buffer(radius)
+        if feature is not None:
+            geometry = ee.Geometry.Polygon(feature['geometry']['coordinates'])
+        else: # Geometry defined by point and radius
+            geometry = ee.Geometry.Point(lon, lat).buffer(radius)
         # Define function to map over imageCollection to perform spatial aggregation 
         def _reduce_region(image):
             """Spatial aggregation function for a single image and a polygon feature"""
