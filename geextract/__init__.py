@@ -213,6 +213,8 @@ def dictlist2sqlite(dl, db_src, table):
             it does not return anything
     """
     df = pd.DataFrame(dl)
+    # Drop any row that contain no-data
+    df2 = df.dropna(how='any')
     con = sqlite3.connect(db_src)
-    df.to_sql(name=table, con=con, if_exists='append')
+    df2.to_sql(name=table, con=con, if_exists='append')
 
