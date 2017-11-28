@@ -214,6 +214,7 @@ def dictlist2sqlite(dl, db_src, table):
     """
     df = pd.DataFrame(dl)
     # Drop any row that contain no-data
+    # TODO: Filter only row for which all bands are Nan
     df2 = df.dropna(how='any')
     con = sqlite3.connect(db_src)
     df2.to_sql(name=table, con=con, if_exists='append')
