@@ -15,7 +15,6 @@ python:
 before_install:
   - pip install -U pip
   - ./travis_setup.py
-  - cat .config/earthengine/credentials
 
 install:
   - pip install -e .  
