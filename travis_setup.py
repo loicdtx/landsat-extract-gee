@@ -14,6 +14,6 @@ line = '{"refresh_token": "%s"}' % key
 os.makedirs(os.path.expanduser('~/.config/earthengine/'))
 
 # Write line to file
-with open(os.path.expanduser('~/.config/earthengine/credentials', 'w')) as dst:
+with open(os.path.expanduser('~/.config/earthengine/credentials'), 'w') as dst:
    dst.write(line)
 
