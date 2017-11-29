@@ -8,7 +8,7 @@ import os
 key = os.environ['GEE_API_KEY']
 
 # Build line
-line = '{"refresh_token": "%s"} % key'
+line = '{"refresh_token": "%s"}' % key
 
 # Create directory 
 os.makedirs('.config/earthengine/')
