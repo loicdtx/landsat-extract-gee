@@ -1,0 +1,27 @@
+language: python
+
+cache: pip
+
+sudo: required
+
+dist: trusty
+
+python:
+  - "2.7"
+
+secure: "DHDYMmZZyxvv1n2TYfmuBTgb8nkCaDsYYsnA9oTBftKDrGIBRdbeUyybRCMo2BNtymXi5ZI9faTi8L29Vxw8C1JvOrGU/WmWevzhgfOXrkt4ohIEz+UG4R1EgCs/n5CYJoPjWJAoGInRdRZTuk5tbuRWjvehe8lyQ9g3E5W7+YIxjGL2tRMMKXIZLlJqleLhar9gk7EMXlJDwW4i1oUNsfNIxV7yT4nb7/iUerWrtGvazeIH4vfdXIprN95/rvdfJZeTwM+st9UopJQU6Kg44+EwClB3Q3czGmChIEXoLuEcEcnyqW4CwgX9YNRe9gSJLyE+eGLX34BbuR4ylD8qOtzz0vDqrsbsdIay8fi1hMM8MOF990YLwlkosoS2mly871BTIcARXWNtFZFtbj6XBq1JxdHes7ozn6IifxLHCGUNQSBYjhZlwBrFFenGP413lr55AuRYNMByuCxgCTrzEYMSAexWZCO/4rQUCZmmwhtJZoa6y41yT/rUVCqML5ExSBERgCvYzP9RcYmM3KvV5Kb2lHP6GFLGI4fObsKd2MAB9pZeyNDuRLZtg2vRSkFjKOqb4u03pY1yEplmf57wPtDUjBCCsovmHjokuGCr1QXsbvydwIJlRpVi+8bkYWwblybdW7mqvYb5uRL1b8BhPNPvHxcQ+dMYTKq7Ltfb5pM="
+
+before_install:
+  - pip install -U pip
+  - ./travis_setup.py
+
+install:
+  - pip install -e .  
+
+script:
+  - python setup.py test
+
+warnings_are_errors: true
+
+notifications:
+  email: false
