@@ -1,3 +1,4 @@
 geextract.egg-info/*
+docs/_build/*
 *.swp
 *.pyc

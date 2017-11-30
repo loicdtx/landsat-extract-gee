@@ -11,7 +11,7 @@ with open('geextract/__init__.py') as f:
             continue
 
 # 
-extra_reqs = {'docs': ['sphinx', 'sphinx-rtd-theme']}
+extra_reqs = {'docs': ['sphinx', 'sphinx-rtd-theme', 'sphinxcontrib-programoutput']}
 extra_reqs['all'] = list(set(itertools.chain(*extra_reqs.values())))
 
 setup(name='geextract',
