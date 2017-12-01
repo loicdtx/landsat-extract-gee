@@ -26,7 +26,7 @@ git repository hosted at https://github.com/loicdtx/landsat-extract-gee
    :maxdepth: 2
    :caption: Examples
 
-   
+   examples
 
 
 
