@@ -219,6 +219,9 @@ def dictlist2sqlite(dl, db_src, table):
         This function is used for its side effect of writing data to a database;
             it does not return anything
     """
+    # Add time key to each dict of dl
+    for item in dl:
+        item.update(time = get_date(item['id']))
     df = pd.DataFrame(dl)
     # Drop any row that contain no-data
     # TODO: Filter only row for which all bands are Nan
