@@ -205,7 +205,20 @@ def dictify(x):
     return out
 
 def date_append(dl):
-    pass
+    """Add time key to each element of a list of dictionaries
+
+    Args:
+        dl (list): List of dictionaries, each dictionary should at least contain
+            the key 'id' in which a classic Landsat scene ID parsable by get_date
+            is stored.
+
+    Returns:
+        list: A list of dictionaries
+    """
+    # Add time key to each dict of dl
+    for item in dl:
+        item.update(time = get_date(item['id']))
+    return dl
 
 def dictlist2sqlite(dl, db_src, table):
     """Write a list of dictionaries to a sqlite database
@@ -219,9 +232,6 @@ def dictlist2sqlite(dl, db_src, table):
         This function is used for its side effect of writing data to a database;
             it does not return anything
     """
-    # Add time key to each dict of dl
-    for item in dl:
-        item.update(time = get_date(item['id']))
     df = pd.DataFrame(dl)
     # Drop any row that contain no-data
     # TODO: Filter only row for which all bands are Nan
