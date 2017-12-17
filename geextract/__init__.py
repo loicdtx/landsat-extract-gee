@@ -11,6 +11,25 @@ from datetime import datetime
 ee.Initialize()
 
 
+BANDS_TO_COLORS = {'LT4': {'B1': 'blue',
+                           'B2': 'green',
+                           'B3': 'red',
+                           'B4': 'nir',
+                           'B5': 'swir1',
+                           'B7': 'swir2',
+                           'id': 'id'},
+                   'LC8': {'B2': 'blue',
+                           'B3': 'green',
+                           'B4': 'red',
+                           'B5': 'nir',
+                           'B6': 'swir1',
+                           'B7': 'swir2',
+                           'id': 'id'}}
+
+BANDS_TO_COLORS['LT5'] = BANDS_TO_COLORS['LT4']
+BANDS_TO_COLORS['LE7'] = BANDS_TO_COLORS['LT4']
+
+
 def get_date(filename):
     """Retriev date information from typical Landsat filenames
 
@@ -203,6 +222,23 @@ def dictify(x):
     """
     out = [dict(zip(x[0], values)) for values in x[1:]]
     return out
+
+def relabel(dl, sensor):
+    """Rename the keys of each element of a list of dictionaries
+
+    Args:
+        dl (list): List of dictionaries
+        sensor (str): Landsat sensor to which belong the data. Must be one of
+            'LT4', 'LT5', 'LE7' or 'LC8'
+
+    Returns:
+        list: A list of dictionaries
+    """
+    def change_keys(d, dr):
+        return dict((dr[key], value) for (key, value) in d.items())
+    dl_out = [change_keys(d, BANDS_TO_COLORS[sensor]) for d in dl]
+    return dl_out
+
 
 def date_append(dl):
     """Add time key to each element of a list of dictionaries
