@@ -18,7 +18,7 @@ dict_list = [{'id': "LT50200461986040", 'B1': 12, 'B2': 23},
 
 class TestDatabase(unittest.TestCase):
     def test_insert(self):
-        dictlist2sqlite(dict_list, db_name, 'unittesting')
+        dictlist2sqlite(dict_list, 'testSite', 'LT5', db_name, 'unittesting')
         conn = sqlite3.connect(db_name)
         cur = conn.cursor()
         cur.execute("SELECT * FROM unittesting")
