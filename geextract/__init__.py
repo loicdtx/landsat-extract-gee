@@ -7,6 +7,10 @@ import sqlite3
 import pandas as pd
 import re
 from datetime import datetime
+import warnings
+
+# Silence pandas warning
+warnings.simplefilter(action='ignore')
 
 ee.Initialize()
 
