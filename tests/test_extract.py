@@ -10,7 +10,7 @@ class TestTsExtraction(unittest.TestCase):
         self.assertTrue(len(a) > 2)
         self.assertTrue(isinstance(a[0], dict))
         self.assertEqual(set(a[0].keys()),
-                         set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'latitude',
+                         set(['id', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'latitude',
                               'longitude', 'time']))
 
     def test_point_radius(self):
@@ -20,5 +20,5 @@ class TestTsExtraction(unittest.TestCase):
         self.assertTrue(len(a) > 2)
         self.assertTrue(isinstance(a[0], dict))
         self.assertEqual(set(a[0].keys()),
-                         set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']))
+                         set(['id', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']))
 
