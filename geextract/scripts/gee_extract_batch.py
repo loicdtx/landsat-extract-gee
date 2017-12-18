@@ -4,9 +4,9 @@ from __future__ import print_function
 import argparse
 from datetime import datetime
 import csv
-from geextract import ts_extract, dictlist2sqlite
+from geextract import ts_extract, dictlist2sqlite, relabel, date_append
 
-def main(file, sensor, begin, end, radius, bands, stats, collection, db):
+def main(file, sensor, begin, end, radius, stats, collection, db, table):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
@@ -20,14 +20,17 @@ def main(file, sensor, begin, end, radius, bands, stats, collection, db):
             try:
                 lon = float(line[0])
                 lat = float(line[1])
-                table = '%s_%s' % (line[2], sensor)
+                site = line[2]
                 # Extract data
-                dict_list = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
-                                       radius=radius, bands=bands, stats=stats,
+                dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
+                                       radius=radius, stats=stats,
                                        collection=collection)
-                print('Extracted %d records from Google Eath Engine' % len(dict_list))
+                print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
+                # Prepare list of dictories ()
+                dict_list_1 = relabel(dict_list_0, sensor)
+                dict_list_2 = date_append(dict_list_1)
                 # Write to db
-                dictlist2sqlite(dict_list, db, table)
+                dictlist2sqlite(dict_list_2, site=site, sensor=sensor, db_src=db, table=table)
             except Exception as e:
                 print('An error occured while extracting a site. %s' % e)
 
@@ -39,15 +42,17 @@ a single pixel, or for a circular region, in which case data are spatially aggre
 for each time step using the a user defined spatial aggregation function.
 
 Input locations must be provided in a text file, with on each line lon,lat,site_name
-site_name provided for each site in the text file is used as table names, with sensor name
-appended.
+site_name provided for each site in the text file is used (together with sensor) as grouping variable
+in the sqlite table.
 
 --------------------------
 Example usage
 --------------------------
 # Extract all the LC8 bands in a 500 meters for two locations between 2012 and now
 echo "4.7174,44.7814,rompon\\n-149.4260,-17.6509,tahiti" > site_list.txt
-gee_extract_batch.py site_list.txt -b 2012-01-01 -s LC8 -r 500 -db /tmp/gee_db.sqlite
+gee_extract_batch.py site_list.txt -b 1984-01-01 -s LT5 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
+gee_extract_batch.py site_list.txt -b 1984-01-01 -s LE7 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
+gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
 """
 
 
@@ -75,6 +80,9 @@ gee_extract_batch.py site_list.txt -b 2012-01-01 -s LC8 -r 500 -db /tmp/gee_db.s
     parser.add_argument('-s', '--sensor', required=True,
                         help='Landsat sensor to query; one of LT4, LT5, LE7, LC8')
 
+    parser.add_argument('-table', '--table', required=True,
+                        help='Database table name to write data. Existing tables will be appended')
+
     parser.add_argument('-stats', '--stats', required=False,
                         help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
     parser.set_defaults(stats='mean')
@@ -82,11 +90,6 @@ gee_extract_batch.py site_list.txt -b 2012-01-01 -s LC8 -r 500 -db /tmp/gee_db.s
     parser.add_argument('-col', '--collection', type=str, required=False,
                         help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
     parser.set_defaults(collection='1')
-
-    parser.add_argument('-bands', '--bands', nargs='*', required=False,
-                       help='Landsat spectral bands to include in the output. Defaults to all bands (different for LC8 and the other sensors)')
-    parser.set_defaults(bands=None)
-
 
     parsed_args = parser.parse_args()
 

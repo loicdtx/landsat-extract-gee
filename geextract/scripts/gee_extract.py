@@ -3,10 +3,10 @@ from __future__ import print_function
 
 import argparse
 from datetime import datetime
-from geextract import ts_extract, dictlist2sqlite
+from geextract import ts_extract, relabel, date_append, dictlist2sqlite
 
-def main(lon, lat, sensor, begin, end, radius, bands, stats, collection, db,
-         table):
+def main(lon, lat, sensor, begin, end, radius, stats, collection, db,
+         table, site):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
@@ -14,12 +14,15 @@ def main(lon, lat, sensor, begin, end, radius, bands, stats, collection, db,
     if collection.isdigit():
         collection = int(collection)
     # Extract data
-    dict_list = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
-                           radius=radius, bands=bands, stats=stats,
+    dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
+                           radius=radius, stats=stats,
                            collection=collection)
-    print('Extracted %d records from Google Eath Engine' % len(dict_list))
+    print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
+    # Prepare list of dictories ()
+    dict_list_1 = relabel(dict_list_0, sensor)
+    dict_list_2 = date_append(dict_list_1)
     # Write to db
-    dictlist2sqlite(dict_list, db, table)
+    dictlist2sqlite(dict_list_2, site=site, sensor=sensor, db_src=db, table=table)
 
 if __name__ == '__main__':
     epilog = """
@@ -28,16 +31,17 @@ engine platform and write the output to a local sqlite database. Query can be do
 a single pixel, or for a circular region, in which case data are spatially aggregated
 for each time step using the a user defined spatial aggregation function.
 
-sqlite tables get appended if new data are queried (i.e. for the same location but a different sensor),
-but mind that band names are different for LC8 and the other sensors.
+sqlite tables get appended if new data are queried (i.e. for the same location but a different sensor).
 
 --------------------------
 Example usage
 --------------------------
 # Extract all the LT5 bands for a location in Yucatan for the entire Landsat period, with a 500m radius
-gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -table uxmal
+gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
+gee_extract.py -s LE7 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
+gee_extract.py -s LC8 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
 # Order pre-collection data
-gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -table uxmal_pre -col pre
+gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -table pre_col -site uxmal -col pre
 """
 
 
@@ -65,6 +69,9 @@ gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
     parser.add_argument('-db', '--db', required=True,
                         help='Path to sqlite database. Will be created if does not exist')
 
+    parser.add_argument('-site', '--site', required=True,
+                        help='Label associated with that location (e.g. Site name)')
+
     parser.add_argument('-table', '--table', required=True,
                         help='Database table name to write data. Existing tables will be appended')
 
@@ -82,11 +89,6 @@ gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
     parser.add_argument('-col', '--collection', type=str, required=False,
                         help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
     parser.set_defaults(collection='1')
-
-    parser.add_argument('-bands', '--bands', nargs='*', required=False,
-                       help='Landsat spectral bands to include in the output. Defaults to all bands (different for LC8 and the other sensors)')
-    parser.set_defaults(bands=None)
-
 
     parsed_args = parser.parse_args()
 
