@@ -124,7 +124,7 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
         if sensor in ['LT4', 'LT5', 'LE7']:
             bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B7']
         else:
-            bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']
+            bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']
     if collection == 'pre':
         sensor = 'LANDSAT/%s_SR' % sensor
     elif collection == 1:
@@ -256,7 +256,7 @@ def date_append(dl):
         item.update(time = get_date(item['id']))
     return dl
 
-def dictlist2sqlite(dl, db_src, table):
+def dictlist2sqlite(dl, site, sensor, db_src, table):
     """Write a list of dictionaries to a sqlite database
 
     Args:
@@ -272,6 +272,8 @@ def dictlist2sqlite(dl, db_src, table):
     # Drop any row that contain no-data
     # TODO: Filter only row for which all bands are Nan
     df2 = df.dropna(how='any')
+    df2['sensor'] = sensor
+    df2['site'] = site
     con = sqlite3.connect(db_src)
     df2.to_sql(name=table, con=con, if_exists='append')
 
