@@ -23,6 +23,14 @@ script:
 after_success:
   - coveralls
 
+deploy:
+  provider: pypi
+  user: "loicdtx"
+  password:
+    secure: "lhFeqgk0yI1c9YJwrKV7Z1wIuzCv6yVezsi80w5NYL/R4g99KPPwtVNIHPzKwo2Sh+FrKYMdN5lSCEEjZoqLOjoPQn2aQYUs6pSgwGcpzGIoijS6FkRL+gnQF56pPqFOBhxKOTlIihEqDTqr7lqiXT8zfDZyT4zdrxCsGg7JmgpKtqYl4aC8KYv3EBnCP6hs781ihV9VHpD6vOoUcPiiQmi4/qkI8wiqEJi5vZV8AGVBC1tV7EGYHD9jzlalsRrXYIWvXTFS/ercR1OkrOKzaEQlrHgfwZhQw6uqKHMOTIq7Q583MC01VluCpqCuL10c3TqxbV/4kl6MHX1z2dAaI55/hWHgfqaT5ZPWIZivA0+/UorzPV1vZikven7GLuimwSnJLLM6S6I+ecjG2+Zc45PKc6BYlSteHHWuaWbsY2M4cQU0qSZzlgZG412c3//2NUULpZcN3MojHB+ayFkikmnQv3BjiX53feGCBs7GQvYEn0f87gmzM/W6AxekzgfgE9NrvpEJG6zCXzVL6jNh46pnX+fy4ZyqIXJ0evc+vQ/HXRtnr4bXCH/O1PlEUeW8yfcqu3rxU80c11y52juiubkyZtlevctTV9b+Fuu1o/giyGbMh9Xwgn/TtL+04T7lMRV8R1AtydRazVbFUXRbFGQ1R/bi/W4LOGb3KOmcQw8="
+  on:
+    tags: true
+
 warnings_are_errors: true
 
 notifications:
