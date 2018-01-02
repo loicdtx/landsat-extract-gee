@@ -41,16 +41,33 @@ class TestTsExtraction(unittest.TestCase):
                          set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
 
     def test_exceptions(self):
-        with self.assertRaises(ValueError):
-            # collection does not exist
-            ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
-                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
-                       stats = 'max', collection = 2)
-            # sensor does not exist
-            ts_extract(lon=-3, lat=44.7, sensor='LT8', start=datetime(1999,1,1),
-                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
-                       stats = 'max', collection = 1)
-            # aggregation method does not exist
-            ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
-                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
-                       stats = 'mode', collection = 1)
+        # wrong collection
+        kwargs_0 = {'lon': -3,
+                  'lat': 44.7,
+                  'sensor': 'LT5',
+                  'start': datetime(1999, 1, 1),
+                  'end': datetime(2000, 6, 1),
+                  'radius': 300,
+                  'stats': 'max',
+                  'collection': 2}
+        self.assertRaises(ValueError, ts_extract, **kwargs_0)
+        # sensor does not exist
+        kwargs_1 = {'lon': -3,
+                  'lat': 44.7,
+                  'sensor': 'LT8',
+                  'start': datetime(1999, 1, 1),
+                  'end': datetime(2000, 6, 1),
+                  'radius': 300,
+                  'stats': 'max',
+                  'collection': 1}
+        self.assertRaises(ValueError, ts_extract, **kwargs_1)
+        # aggregation method does not exist
+        kwargs_2 = {'lon': -3,
+                  'lat': 44.7,
+                  'sensor': 'LT5',
+                  'start': datetime(1999, 1, 1),
+                  'end': datetime(2000, 6, 1),
+                  'radius': 300,
+                  'stats': 'mode',
+                  'collection': 1}
+        self.assertRaises(ValueError, ts_extract, **kwargs_2)

@@ -82,10 +82,12 @@ class TestFilenameParsing(unittest.TestCase):
         d2 = date(2000, 6, 4)
         f3 = 'LE07_023039_20000604'
         d3 = date(2000, 6, 4)
+        f4 = 'S2A_MSIL1C_20170105T013442_N0204_R031_T53NMJ_20170105T013443'
 
         self.assertEqual(get_date(f1), d1)
         self.assertEqual(get_date(f2), d2)
         self.assertEqual(get_date(f3), d3)
+        self.assertRaises(ValueError, get_date, *[f4])
 
 
 class TestUtils(unittest.TestCase):
