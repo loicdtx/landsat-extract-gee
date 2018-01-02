@@ -13,6 +13,7 @@ before_install:
   - ./travis_setup.py
 
 install:
+  - pip install codecov
   - pip install -e .  
 
 script:
