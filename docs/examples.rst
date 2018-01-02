@@ -18,7 +18,7 @@ First example: extract a time-series using the API and plot it with matplotlib
     lon = -89.8107197
     lat = 20.4159611
     raw_dict = ts_extract(lon=lon, lat=lat, sensor='LE7',
-                          start=datetime(1999, 1, 1, 0, 0), radius=500)
+                          start=datetime(1999, 1, 1), radius=500)
 
     # Function to compute ndvi from a dictionary of the list of dictionaries returned
     # by ts_extract
