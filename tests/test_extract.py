@@ -22,3 +22,35 @@ class TestTsExtraction(unittest.TestCase):
         self.assertEqual(set(a[0].keys()),
                          set(['id', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']))
 
+    def test_point_radius_tm(self):
+        a = ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
+                       end=datetime(2005, 6, 1), radius = 300, feature = None, bands = None,
+                       stats = 'median', collection = 1)
+        self.assertTrue(len(a) > 2)
+        self.assertTrue(isinstance(a[0], dict))
+        self.assertEqual(set(a[0].keys()),
+                         set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
+
+    def test_point_radius_pre(self):
+        a = ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
+                       end=datetime(2005, 6, 1), radius = 300, feature = None, bands = None,
+                       stats = 'max', collection = 'pre')
+        self.assertTrue(len(a) > 2)
+        self.assertTrue(isinstance(a[0], dict))
+        self.assertEqual(set(a[0].keys()),
+                         set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
+
+    def test_exceptions(self):
+        with self.assertRaises(ValueError):
+            # collection does not exist
+            ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
+                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
+                       stats = 'max', collection = 2)
+            # sensor does not exist
+            ts_extract(lon=-3, lat=44.7, sensor='LT8', start=datetime(1999,1,1),
+                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
+                       stats = 'max', collection = 1)
+            # aggregation method does not exist
+            ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
+                       end=datetime(2000, 6, 1), radius = 300, feature = None, bands = None,
+                       stats = 'mode', collection = 1)
