@@ -18,6 +18,9 @@ install:
 script:
   - python setup.py test
 
+after_success:
+  - coverage run setup.py test
+
 warnings_are_errors: true
 
 notifications:
