@@ -1,6 +1,7 @@
 # geextract
 
 [![Build](https://travis-ci.org/loicdtx/landsat-extract-gee.png?branch=master)](https://travis-ci.org/loicdtx/landsat-extract-gee)
+[![Coverage Status](https://coveralls.io/repos/github/loicdtx/landsat-extract-gee/badge.svg?branch=master)](https://coveralls.io/github/loicdtx/landsat-extract-gee?branch=master)
 
 ## Introduction
 
