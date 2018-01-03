@@ -7,6 +7,9 @@ You must have a Google Earth Engine account. If you don't yet have an account, y
 Once you have an account, the package can be installed using ``pip``, preferably within a virtual environment. If you're new to python and/or virtual environments, read the :ref:`scratch` section.
 
 
+Quick install
+^^^^^^^^^^^^^
+
 .. code-block:: bash
 
     pip install geextract
@@ -32,12 +35,14 @@ If nothing happens, it means that things are working... You can go ahead and use
 .. _scratch:
 
 Install from scratch
---------------------
+^^^^^^^^^^^^^^^^^^^^
+
 
 This section details step by step installation and setup from scratch. It includes installating and seting up `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_ on ubuntu/debian. For windows and mac, refer to the `gee API installation instructions <https://developers.google.com/earth-engine/python_install_manual>`_.
 
 Install dependencies
-^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""
+
 
 .. code-block:: bash
 
@@ -62,7 +67,7 @@ Install dependencies
     # And get back to it with 'workon geextract'
 
 Install the package
-^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""
 
 To install the ``geextract`` package, run the following line in your terminal from within a virtual environment.
 
