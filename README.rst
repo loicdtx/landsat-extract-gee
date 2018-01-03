@@ -1,23 +1,29 @@
-*********
 geextract
-*********
+=========
+
+*Google Earth ENgine data extraction tool to quickly obtain Landsat multispectral time-series*
+
 
 .. image:: https://coveralls.io/repos/github/loicdtx/landsat-extract-gee/badge.svg?branch=master
-:target: https://coveralls.io/github/loicdtx/landsat-extract-gee?branch=master
+    :target: https://coveralls.io/github/loicdtx/landsat-extract-gee?branch=master
 
 .. image:: https://travis-ci.org/loicdtx/landsat-extract-gee.svg?branch=master
     :target: https://travis-ci.org/loicdtx/landsat-extract-gee
 
+.. image:: https://badge.fury.io/py/geextract.svg
+    :target: https://badge.fury.io/py/geextract
+
 Introduction
-============
+------------
+
 
 A python library (API + command lines) to extract Landsat time-series from the Google Earth Engine platform. Can query single pixels or spatially aggregated values over polygons. When used via the command line, extracted time-series are written to a sqlite database.
 
 Usage
-=====
+-----
 
 API
----
+^^^
 
 The principal function of the API is ``ts_extract``
 
@@ -35,7 +41,7 @@ The principal function of the API is ``ts_extract``
 
 
 Command line
-------------
+^^^^^^^^^^^^
 
 ``geextract`` comes with two command lines, for extracting Landsat time-series directly from the comman line.
 
@@ -63,7 +69,7 @@ Command line
 
 
 Installation
-============
+------------
 
 You must have a `Google Earth Engine <http://signup.earthengine.google.com/#!/>`_ account to use the package.
 
@@ -88,7 +94,7 @@ If nothing happens... it's working.
 
 
 Benchmark
-=========
+---------
 
 A quick benchmark of the extraction speed, using a 500 m buffer.
 
