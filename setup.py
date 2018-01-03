@@ -1,3 +1,4 @@
+import codecs
 from setuptools import setup, find_packages
 import itertools
 
@@ -14,13 +15,16 @@ with open('geextract/__init__.py') as f:
 extra_reqs = {'docs': ['sphinx',
                        'sphinx-rtd-theme',
                        'sphinxcontrib-programoutput',
-                       'ipython',
                        'matplotlib']}
 extra_reqs['all'] = list(set(itertools.chain(*extra_reqs.values())))
+
+with codecs.open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
 
 setup(name='geextract',
       version=version,
       description=u"Extract Landsat surface reflectance time-series at given location from google earth engine",
+      long_description=readme,
       classifiers=[],
       keywords='Landsat, surface reflectance, google, gee, time-series',
       author=u"Loic Dutrieux",
