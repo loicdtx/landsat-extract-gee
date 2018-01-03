@@ -3,6 +3,7 @@ geextract
 
 *Google Earth Engine data extraction tool. Quickly obtain Landsat multispectral time-series for exploratory analysis and algorithm testing*
 
+Online documentation available at https://loicdtx.github.io/landsat-extract-gee
 
 .. image:: https://coveralls.io/repos/github/loicdtx/landsat-extract-gee/badge.svg?branch=master
     :target: https://coveralls.io/github/loicdtx/landsat-extract-gee?branch=master
@@ -14,7 +15,6 @@ geextract
     :target: https://badge.fury.io/py/geextract
 
 
-Online documentation available at https://loicdtx.github.io/landsat-extract-gee
 
 Introduction
 ------------
