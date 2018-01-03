@@ -13,6 +13,9 @@ geextract
 .. image:: https://badge.fury.io/py/geextract.svg
     :target: https://badge.fury.io/py/geextract
 
+
+Online documentation available at https://loicdtx.github.io/landsat-extract-gee
+
 Introduction
 ------------
 
@@ -22,6 +25,9 @@ A python library (API + command lines) to extract Landsat time-series from the G
 The idea is to provide quick access to Landsat time-series for exploratory analysis or algorithm testing. Instead of downloading the whole stack of Landsat scenes, preparing the data locally and extracting the time-series of interest, which may take several days, ``geextract`` allows to get time-series in a few seconds.
 
 Compatible with python 2.7 and 3.
+
+.. image:: https://github.com/loicdtx/landsat-extract-gee/raw/master/docs/figs/drawing.jpg
+    :scale: 20 %
 
 Usage
 -----
@@ -70,6 +76,11 @@ Command line
     gee_extract_batch.py site_list.txt -b 1984-01-01 -s LT5 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
     gee_extract_batch.py site_list.txt -b 1984-01-01 -s LE7 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
     gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
+
+
+.. image:: https://github.com/loicdtx/landsat-extract-gee/raw/master/docs/figs/multispectral_uxmal.png
+
+
 
 
 Installation

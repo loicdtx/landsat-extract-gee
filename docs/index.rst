@@ -5,12 +5,13 @@ This is the documentation of the ``geextract`` python package. The source code i
 git repository hosted at https://github.com/loicdtx/landsat-extract-gee
 
 
-
 .. toctree::
    :maxdepth: 2
 
    introduction
 
+.. image:: figs/drawing.jpg
+   :scale: 20 %
 
 
 .. toctree::
