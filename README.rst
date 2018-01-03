@@ -27,7 +27,7 @@ The idea is to provide quick access to Landsat time-series for exploratory analy
 Compatible with python 2.7 and 3.
 
 .. image:: https://github.com/loicdtx/landsat-extract-gee/raw/master/docs/figs/drawing.jpg
-    :scale: 20 %
+    :width: 500
 
 Usage
 -----
