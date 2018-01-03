@@ -9,7 +9,7 @@ Once you have an account, the package can be installed using ``pip``, preferably
 
 .. code-block:: bash
 
-    pip install git+https://github.com/loicdtx/landsat-extract-gee.git
+    pip install geextract
 
 If you're using the gee API for the first time on your machine, you'll have to run:
 
@@ -34,15 +34,15 @@ If nothing happens, it means that things are working... You can go ahead and use
 Install from scratch
 --------------------
 
-This section details step by step installation and setup from scratch. It includes installating and seting up git, `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_ on ubuntu/debian. For windows and mac, refer to the `gee API installation instructions <https://developers.google.com/earth-engine/python_install_manual>`_.
+This section details step by step installation and setup from scratch. It includes installating and seting up `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ and `virtualenvwrapper <https://virtualenvwrapper.readthedocs.io/en/latest/>`_ on ubuntu/debian. For windows and mac, refer to the `gee API installation instructions <https://developers.google.com/earth-engine/python_install_manual>`_.
 
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
-    # Install pip (a package manager for python) and git (required to install directly from github)
-    sudo apt-get install python-pip git
+    # Install pip (a package manager for python)
+    sudo apt-get install python-pip
 
     # Install virtualenv (virtual environments for python projects)
     sudo pip install virtualenv
@@ -69,7 +69,7 @@ To install the ``geextract`` package, run the following line in your terminal fr
 .. code-block:: bash
 
     # Install
-    pip install git+https://github.com/loicdtx/landsat-extract-gee.git
+    pip install geextract
 
 You then need to authenticate for the package to be able to interact with the Google Earth Engine platform.
 

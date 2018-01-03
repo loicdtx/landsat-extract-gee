@@ -1,7 +1,7 @@
 geextract
 =========
 
-*Google Earth ENgine data extraction tool to quickly obtain Landsat multispectral time-series*
+*Google Earth Engine data extraction tool to quickly obtain Landsat multispectral time-series*
 
 
 .. image:: https://coveralls.io/repos/github/loicdtx/landsat-extract-gee/badge.svg?branch=master
@@ -18,6 +18,10 @@ Introduction
 
 
 A python library (API + command lines) to extract Landsat time-series from the Google Earth Engine platform. Can query single pixels or spatially aggregated values over polygons. When used via the command line, extracted time-series are written to a sqlite database.
+
+The idea is to provide quick access to Landsat time-series for exploratory analysis or algorithm testing. Instead of downloading the whole stack of Landsat scenes, preparing the data locally and extracting the time-series of interest, which may take several days, ``geextract`` allows to get time-series in a few seconds.
+
+Compatible with python 2.7 and 3.
 
 Usage
 -----
@@ -43,7 +47,7 @@ The principal function of the API is ``ts_extract``
 Command line
 ^^^^^^^^^^^^
 
-``geextract`` comes with two command lines, for extracting Landsat time-series directly from the comman line.
+``geextract`` comes with two command lines, for extracting Landsat time-series directly from the command line.
 
 - ``gee_extract.py``: Extract a Landsat multispectral time-series for a single site. Extracted data are automatically added to a sqlite database.
 - ``gee_extract_batch.py``: Batch order Landsat multispectral time-series for multiple locations.
@@ -71,13 +75,13 @@ Command line
 Installation
 ------------
 
-You must have a `Google Earth Engine <http://signup.earthengine.google.com/#!/>`_ account to use the package.
+You must have a `Google Earth Engine <http://signup.earthengine.google.com/#!/>`__ account to use the package.
 
 Then, in a vitual environment run:
 
 .. code-block:: bash
 
-    pip install git+https://github.com/loicdtx/landsat-extract-gee.git
+    pip install geextract
     earthengine authenticate
 
 
