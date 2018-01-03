@@ -116,8 +116,6 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
             clear = image.select('pixel_qa').bitwiseAnd(0x2).neq(0)
         elif collection == 'pre':
             clear = image.select('cfmask').eq(0)
-        else:
-            raise ValueError('Unsupported collection')
         valid_range_mask = image.gte(0).And(image.lte(10000))
         return image.updateMask(clear).updateMask(valid_range_mask)
 
