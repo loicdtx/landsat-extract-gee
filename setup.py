@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import codecs
 from setuptools import setup, find_packages
 import itertools
@@ -27,7 +30,7 @@ setup(name='geextract',
       long_description=readme,
       classifiers=[],
       keywords='Landsat, surface reflectance, google, gee, time-series',
-      author=u"Loic Dutrieux",
+      author=u"Loïc Dutrieux".encode("UTF-8"),
       author_email='loic.dutrieux@gmail.com',
       url='https://github.com/loicdtx/landsat-extract-gee.git',
       license='GPLv3',
