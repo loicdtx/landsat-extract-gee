@@ -18,6 +18,8 @@ with open('geextract/__init__.py') as f:
 extra_reqs = {'docs': ['sphinx',
                        'sphinx-rtd-theme',
                        'sphinxcontrib-programoutput',
+                       'fiona',
+                       'seaborn',
                        'matplotlib']}
 extra_reqs['all'] = list(set(itertools.chain(*extra_reqs.values())))
 
