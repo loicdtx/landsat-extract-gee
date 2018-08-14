@@ -31,15 +31,6 @@ class TestTsExtraction(unittest.TestCase):
                          set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
 
     def test_exceptions(self):
-        # wrong collection
-        kwargs_0 = {'lon': -3,
-                  'lat': 44.7,
-                  'sensor': 'LT5',
-                  'start': datetime(1999, 1, 1),
-                  'end': datetime(2000, 6, 1),
-                  'radius': 300,
-                  'stats': 'max'}
-        self.assertRaises(ValueError, ts_extract, **kwargs_0)
         # sensor does not exist
         kwargs_1 = {'lon': -3,
                   'lat': 44.7,
