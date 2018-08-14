@@ -6,13 +6,10 @@ from datetime import datetime
 import csv
 from geextract import ts_extract, dictlist2sqlite, relabel, date_append
 
-def main(file, sensor, begin, end, radius, stats, collection, db, table):
+def main(file, sensor, begin, end, radius, stats, db, table):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
-    # Collection can be a string or an integer, prepare input type for passing to ts_extract
-    if collection.isdigit():
-        collection = int(collection)
     # Read coordinates and table names from text file
     with open(file) as src:
         reader = csv.reader(src)
@@ -23,8 +20,7 @@ def main(file, sensor, begin, end, radius, stats, collection, db, table):
                 site = line[2]
                 # Extract data
                 dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
-                                       radius=radius, stats=stats,
-                                       collection=collection)
+                                       radius=radius, stats=stats)
                 print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
                 # Prepare list of dictories ()
                 dict_list_1 = relabel(dict_list_0, sensor)
@@ -86,10 +82,6 @@ gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.s
     parser.add_argument('-stats', '--stats', required=False,
                         help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
     parser.set_defaults(stats='mean')
-
-    parser.add_argument('-col', '--collection', type=str, required=False,
-                        help='Landsat collection. \'pre\' for pre-collection, 1 for collection 1 (default)')
-    parser.set_defaults(collection='1')
 
     parsed_args = parser.parse_args()
 

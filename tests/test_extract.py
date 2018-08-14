@@ -30,15 +30,6 @@ class TestTsExtraction(unittest.TestCase):
         self.assertEqual(set(a[0].keys()),
                          set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
 
-    def test_point_radius_pre(self):
-        a = ts_extract(lon=-3, lat=44.7, sensor='LT5', start=datetime(1999,1,1),
-                       end=datetime(2005, 6, 1), radius = 300, feature = None, bands = None,
-                       stats = 'max', collection = 'pre')
-        self.assertTrue(len(a) > 2)
-        self.assertTrue(isinstance(a[0], dict))
-        self.assertEqual(set(a[0].keys()),
-                         set(['id', 'B1', 'B2', 'B3', 'B4', 'B5', 'B7']))
-
     def test_exceptions(self):
         # wrong collection
         kwargs_0 = {'lon': -3,

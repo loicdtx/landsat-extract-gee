@@ -61,7 +61,7 @@ def get_date(filename):
 
 
 def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), radius = None,
-               feature = None, bands = None, stats = 'mean', collection = 1):
+               feature = None, bands = None, stats = 'mean'):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
 
@@ -85,8 +85,6 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] otherwise.
         stats (str): Spatial aggregation function to use. Only relevant
             if a radius value is set.
-        collection (str or int): Landsat collection. 'pre' for pre-collection,
-            1 for collection 1 (default)
 
     Returns:
         dict: A dictionary representation of the json data returned by the gee platform.
@@ -113,10 +111,7 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
         # Pre collecction masking example
         # https://code.earthengine.google.com/37ffd688d1b2d2c977fa5c536a023356
         # collection must be a variable of the parent environment
-        if collection == 1:
-            clear = image.select('pixel_qa').bitwiseAnd(0x2).neq(0)
-        elif collection == 'pre':
-            clear = image.select('cfmask').eq(0)
+        clear = image.select('pixel_qa').bitwiseAnd(0x2).neq(0)
         valid_range_mask = image.gte(0).And(image.lte(10000))
         return image.updateMask(clear).updateMask(valid_range_mask)
 
@@ -128,13 +123,8 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
             bands = ['B1', 'B2', 'B3', 'B4', 'B5', 'B7']
         else:
             bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']
-    if collection == 'pre':
-        sensor = 'LANDSAT/%s_SR' % sensor
-    elif collection == 1:
-        sensor = re.sub(r'(LC|LT|LE)(\d{1})', r'\g<1>0\g<2>', sensor)
-        sensor = 'LANDSAT/%s/C01/T1_SR' % sensor
-    else:
-        raise ValueError('Unsupported collection')
+    sensor = re.sub(r'(LC|LT|LE)(\d{1})', r'\g<1>0\g<2>', sensor)
+    sensor = 'LANDSAT/%s/C01/T1_SR' % sensor
     # Prepare image collection
     landsat = ee.ImageCollection(sensor).\
             filterDate(start=start, opt_end=end)\
