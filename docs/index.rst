@@ -10,9 +10,6 @@ git repository hosted at https://github.com/loicdtx/landsat-extract-gee
 
    introduction
 
-.. image:: figs/drawing.jpg
-   :scale: 20 %
-
 
 .. toctree::
    :maxdepth: 2
