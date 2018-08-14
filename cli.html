@@ -169,42 +169,30 @@
 <div class="section" id="simple-cli-for-ordering-a-single-time-series-and-write-it-to-a-sqlite-database">
 <h2>Simple CLI for ordering a single time-series and write it to a sqlite database<a class="headerlink" href="#simple-cli-for-ordering-a-single-time-series-and-write-it-to-a-sqlite-database" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/bin/gee_extract.py&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).require(&#39;geextract==0.4.0&#39;)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3088, in &lt;module&gt;
-    @_call_aside
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3072, in _call_aside
-    f(*args, **kwargs)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3101, in _initialize_master_working_set
-    working_set = WorkingSet._build_master()
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 574, in _build_master
-    ws.require(__requires__)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 892, in require
-    needed = self.resolve(parse_requirements(requirements))
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 778, in resolve
-    raise DistributionNotFound(req, requirers)
-pkg_resources.DistributionNotFound: The &#39;geextract==0.4.0&#39; distribution was not found and is required by the application
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/bin/gee_extract.py&quot;, line 6, in &lt;module&gt;
+    from geextract import ts_extract, relabel, date_append, dictlist2sqlite
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/geextract/__init__.py&quot;, line 5, in &lt;module&gt;
+    import ee
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/ee/__init__.py&quot;, line 22, in &lt;module&gt;
+    from ._helpers import _GetPersistentCredentials
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/ee/_helpers.py&quot;, line 20, in &lt;module&gt;
+    import oauth2client.client
+ModuleNotFoundError: No module named &#39;oauth2client&#39;
 </pre></div>
 </div>
 </div>
 <div class="section" id="batch-ordering-cli">
 <h2>Batch ordering CLI<a class="headerlink" href="#batch-ordering-cli" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/bin/gee_extract_batch.py&quot;, line 4, in &lt;module&gt;
-    __import__(&#39;pkg_resources&#39;).require(&#39;geextract==0.4.0&#39;)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3088, in &lt;module&gt;
-    @_call_aside
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3072, in _call_aside
-    f(*args, **kwargs)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 3101, in _initialize_master_working_set
-    working_set = WorkingSet._build_master()
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 574, in _build_master
-    ws.require(__requires__)
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 892, in require
-    needed = self.resolve(parse_requirements(requirements))
-  File &quot;/home/loic/.virtualenvs/tmp-3f15e7f0096c716b/lib/python3.6/site-packages/pkg_resources/__init__.py&quot;, line 778, in resolve
-    raise DistributionNotFound(req, requirers)
-pkg_resources.DistributionNotFound: The &#39;geextract==0.4.0&#39; distribution was not found and is required by the application
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/bin/gee_extract_batch.py&quot;, line 7, in &lt;module&gt;
+    from geextract import ts_extract, dictlist2sqlite, relabel, date_append
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/geextract/__init__.py&quot;, line 5, in &lt;module&gt;
+    import ee
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/ee/__init__.py&quot;, line 22, in &lt;module&gt;
+    from ._helpers import _GetPersistentCredentials
+  File &quot;/home/loic/.virtualenvs/tmp-cc458312fe4db1dd/lib/python3.6/site-packages/ee/_helpers.py&quot;, line 20, in &lt;module&gt;
+    import oauth2client.client
+ModuleNotFoundError: No module named &#39;oauth2client&#39;
 </pre></div>
 </div>
 </div>
