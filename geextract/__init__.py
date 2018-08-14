@@ -59,6 +59,7 @@ def get_date(filename):
         raise ValueError('Unknown pattern')
     return d
 
+
 def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), radius = None,
                feature = None, bands = None, stats = 'mean', collection = 1):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
@@ -170,7 +171,13 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
         geometry = ee.Geometry.Point(lon, lat)
         l = landsat.filterBounds(geometry).getRegion(geometry, 30).getInfo()
         out = dictify(l)
+        # pop longitude and lattitude keys from dict collection so that band aliases can
+        # be replaced by their color names
+        [d.pop('longitude', None) for d in out]
+        [d.pop('latitude', None) for d in out]
+        [d.pop('time', None) for d in out]
     return out
+
 
 def simplify(fc):
     """Take a feature collection, as returned by mapping a reducer to a ImageCollection,
@@ -205,6 +212,7 @@ def simplify(fc):
     out = [feature2dict(x) for x in fc['features']]
     return out
 
+
 def dictify(x):
     """Build a list of dictionaries from a list of lists as returned by running
         getRegion on an Image collection
@@ -224,6 +232,7 @@ def dictify(x):
     """
     out = [dict(zip(x[0], values)) for values in x[1:]]
     return out
+
 
 def relabel(dl, sensor):
     """Rename the keys of each element of a list of dictionaries
@@ -257,6 +266,7 @@ def date_append(dl):
     for item in dl:
         item.update(time = get_date(item['id']))
     return dl
+
 
 def dictlist2sqlite(dl, site, sensor, db_src, table):
     """Write a list of dictionaries to a sqlite database

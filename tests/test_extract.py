@@ -10,8 +10,7 @@ class TestTsExtraction(unittest.TestCase):
         self.assertTrue(len(a) > 2)
         self.assertTrue(isinstance(a[0], dict))
         self.assertEqual(set(a[0].keys()),
-                         set(['id', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'latitude',
-                              'longitude', 'time']))
+                         set(['id', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']))
 
     def test_point_radius(self):
         a = ts_extract(lon=-3, lat=44.7, sensor='LC8', start=datetime(2015,1,1),
