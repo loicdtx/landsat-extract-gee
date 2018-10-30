@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>geextract API &mdash; geextract 0.5.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Command line interface" href="../cli.html" />
+    <link rel="prev" title="Processing" href="../processing.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> geextract
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing.html">Processing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">geextract API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command line interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">geextract</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>geextract API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-geextract">
+<span id="geextract-api"></span><h1>geextract API<a class="headerlink" href="#module-geextract" title="Permalink to this headline">¶</a></h1>
+<p>geextract</p>
+<dl class="function">
+<dt id="geextract.date_append">
+<code class="descclassname">geextract.</code><code class="descname">date_append</code><span class="sig-paren">(</span><em>dl</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#date_append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.date_append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add time key to each element of a list of dictionaries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dl</strong> (<em>list</em>) – List of dictionaries, each dictionary should at least contain
+the key ‘id’ in which a classic Landsat scene ID parsable by get_date
+is stored.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of dictionaries</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.dictify">
+<code class="descclassname">geextract.</code><code class="descname">dictify</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#dictify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.dictify" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Build a list of dictionaries from a list of lists as returned by running</dt>
+<dd>getRegion on an Image collection</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>list</em>) – A list of list. First list element contain the keys while following
+list elements contain values.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of dictionaries</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="sa">u</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;B1&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;B2&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;B3&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;B7&#39;</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;LC81970292013106&#39;</span><span class="p">,</span> <span class="mi">649</span><span class="p">,</span> <span class="mi">683</span><span class="p">,</span> <span class="mi">910</span><span class="p">,</span> <span class="mi">1365</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;LC81970292013122&#39;</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">191</span><span class="p">,</span> <span class="mi">521</span><span class="p">,</span> <span class="mi">965</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dictify</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.dictlist2sqlite">
+<code class="descclassname">geextract.</code><code class="descname">dictlist2sqlite</code><span class="sig-paren">(</span><em>dl</em>, <em>site</em>, <em>sensor</em>, <em>db_src</em>, <em>table</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#dictlist2sqlite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.dictlist2sqlite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a list of dictionaries to a sqlite database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dl</strong> (<em>list</em>) – List of dictionaries</li>
+<li><strong>db_src</strong> (<em>str</em>) – Path an sqlite database (created in case it does not exist)</li>
+<li><strong>table</strong> (<em>str</em>) – Name of database table to write data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>This function is used for its side effect of writing data to a database;</dt>
+<dd><p class="first last">it does not return anything</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.get_date">
+<code class="descclassname">geextract.</code><code class="descname">get_date</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#get_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.get_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retriev date information from typical Landsat filenames</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) – Landsat file name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The corresponding date of the filename.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">datetime.date</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">geextract</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">geextract</span><span class="o">.</span><span class="n">get_date</span><span class="p">(</span><span class="s1">&#39;LC81970292013106&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.relabel">
+<code class="descclassname">geextract.</code><code class="descname">relabel</code><span class="sig-paren">(</span><em>dl</em>, <em>sensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#relabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.relabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename the keys of each element of a list of dictionaries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dl</strong> (<em>list</em>) – List of dictionaries</li>
+<li><strong>sensor</strong> (<em>str</em>) – Landsat sensor to which belong the data. Must be one of
+‘LT4’, ‘LT5’, ‘LE7’ or ‘LC8’</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list of dictionaries</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.simplify">
+<code class="descclassname">geextract.</code><code class="descname">simplify</code><span class="sig-paren">(</span><em>fc</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#simplify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.simplify" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Take a feature collection, as returned by mapping a reducer to a ImageCollection,</dt>
+<dd>and reshape it into a simpler list of dictionaries</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fc</strong> (<em>dict</em>) – Dictionary representation of a feature collection, as returned
+by mapping a reducer to an ImageCollection</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of dictionaries.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fc</span> <span class="o">=</span> <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="gp">... </span>      <span class="sa">u</span><span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="sa">u</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;LC81970292013106&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;B1&#39;</span><span class="p">:</span> <span class="mf">651.8054424353023</span><span class="p">,</span>
+<span class="gp">... </span>                                     <span class="sa">u</span><span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="mf">676.6018246419446</span><span class="p">},</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;Feature&#39;</span><span class="p">},</span>
+<span class="gp">... </span>                    <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;geometry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;LC81970292013122&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="sa">u</span><span class="s1">&#39;B1&#39;</span><span class="p">:</span> <span class="mf">176.99323997958842</span><span class="p">,</span>
+<span class="gp">... </span>                                     <span class="sa">u</span><span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="mf">235.83196553144882</span><span class="p">},</span>
+<span class="gp">... </span>                     <span class="sa">u</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;Feature&#39;</span><span class="p">}]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simplify</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="geextract.ts_extract">
+<code class="descclassname">geextract.</code><code class="descname">ts_extract</code><span class="sig-paren">(</span><em>sensor, start, tiers=['T1', 'T2'], lon=None, lat=None, end=datetime.datetime(2018, 10, 30, 18, 2, 52, 98287), radius=None, feature=None, bands=None, stats='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/geextract.html#ts_extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#geextract.ts_extract" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Perform a spatio temporal query to extract Landsat surface reflectance data</dt>
+<dd>from gee</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lon</strong> (<em>float</em>) – Center longitude in decimal degree</li>
+<li><strong>lat</strong> (<em>float</em>) – Center latitude in decimal degree</li>
+<li><strong>sensor</strong> (<em>str</em>) – Landsat sensor to query data from. Must be one of ‘LT4’,
+‘LT5’, ‘LE7’, ‘LC8’</li>
+<li><strong>tiers</strong> (<em>list</em>) – List of tiers to order. <code class="docutils literal notranslate"><span class="pre">'T1'</span></code> corresponds to tiers 1.
+Default is <code class="docutils literal notranslate"><span class="pre">['T1',</span> <span class="pre">'T2']</span></code></li>
+<li><strong>start</strong> (<em>datetime.datetime</em>) – Start date</li>
+<li><strong>end</strong> (<em>datetime.datetime</em>) – Optional end date; automatically set as today if unset</li>
+<li><strong>radius</strong> (<em>float</em>) – Optional radius around center point in meters. If unset,
+time-series of a single pixel are queried. Otherwise a reducer is used
+to spatially aggregate the pixels intersecting the circular feature
+built.</li>
+<li><strong>feature</strong> (<em>dict</em>) – Optional dictionary representation of a polygon feature
+in longlat CRS. If unset, time-series of a single pixel are queried.
+Otherwise a reducer is used to spatially aggregate the pixels intersecting
+the given feature.</li>
+<li><strong>bands</strong> (<em>list</em>) – List of Landsat band names. Optional, defaults to
+[‘B1’, ‘B2’, ‘B3’, ‘B4’, ‘B5’, ‘B7’] in the case of LC8 sensor and to
+[‘B1’, ‘B2’, ‘B3’, ‘B4’, ‘B5’, ‘B7’] otherwise.</li>
+<li><strong>stats</strong> (<em>str</em>) – Spatial aggregation function to use. Only relevant
+if a radius value is set.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A dictionary representation of the json data returned by the gee platform.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">geextract</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="o">-</span><span class="mf">89.8107197</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="mf">20.4159611</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">out</span> <span class="o">=</span> <span class="n">geextract</span><span class="o">.</span><span class="n">ts_extract</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">sensor</span><span class="o">=</span><span class="s1">&#39;LE7&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1980</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>                           <span class="n">radius</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../cli.html" class="btn btn-neutral float-right" title="Command line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../processing.html" class="btn btn-neutral" title="Processing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Loïc Dutrieux
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

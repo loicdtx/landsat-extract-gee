@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>geextract &mdash; geextract 0.5.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> geextract
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.5.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">geextract API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command line interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">geextract</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>geextract</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for geextract</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;geextract&quot;&quot;&quot;</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.5.0&quot;</span>
+
+<span class="kn">import</span> <span class="nn">ee</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># Silence pandas warning</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="n">ee</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+
+
+<span class="n">BANDS_TO_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;LT4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;B1&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B3&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B4&#39;</span><span class="p">:</span> <span class="s1">&#39;nir&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B5&#39;</span><span class="p">:</span> <span class="s1">&#39;swir1&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B7&#39;</span><span class="p">:</span> <span class="s1">&#39;swir2&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;id&#39;</span><span class="p">},</span>
+                   <span class="s1">&#39;LC8&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B3&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B4&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B5&#39;</span><span class="p">:</span> <span class="s1">&#39;nir&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B6&#39;</span><span class="p">:</span> <span class="s1">&#39;swir1&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;B7&#39;</span><span class="p">:</span> <span class="s1">&#39;swir2&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;id&#39;</span><span class="p">}}</span>
+
+<span class="n">BANDS_TO_COLORS</span><span class="p">[</span><span class="s1">&#39;LT5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BANDS_TO_COLORS</span><span class="p">[</span><span class="s1">&#39;LT4&#39;</span><span class="p">]</span>
+<span class="n">BANDS_TO_COLORS</span><span class="p">[</span><span class="s1">&#39;LE7&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BANDS_TO_COLORS</span><span class="p">[</span><span class="s1">&#39;LT4&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_date"><a class="viewcode-back" href="../api/index.html#geextract.get_date">[docs]</a><span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Retriev date information from typical Landsat filenames</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Landsat file name</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        datetime.date : The corresponding date of the filename.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import geextract</span>
+<span class="sd">        &gt;&gt;&gt; geextract.get_date(&#39;LC81970292013106&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p0</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?P&lt;sensor&gt;LC8|LE7|LT5|LT4)(?P&lt;pathrow&gt;\d</span><span class="si">{6}</span><span class="s1">)(?P&lt;date&gt;\d</span><span class="si">{7}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(?P&lt;sensor&gt;LC08|LE07|LT04|LT05)_(?P&lt;pathrow&gt;\d</span><span class="si">{6}</span><span class="s1">)_(?P&lt;date&gt;\d</span><span class="si">{8}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">p0</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">p0</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">),</span> <span class="s1">&#39;%Y%j&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">p1</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">),</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown pattern&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+<div class="viewcode-block" id="ts_extract"><a class="viewcode-back" href="../api/index.html#geextract.ts_extract">[docs]</a><span class="k">def</span> <span class="nf">ts_extract</span><span class="p">(</span><span class="n">sensor</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">tiers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T1&#39;</span><span class="p">,</span> <span class="s1">&#39;T2&#39;</span><span class="p">],</span> <span class="n">lon</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span> <span class="n">radius</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">feature</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">bands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform a spatio temporal query to extract Landsat surface reflectance data</span>
+<span class="sd">        from gee</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lon (float): Center longitude in decimal degree</span>
+<span class="sd">        lat (float): Center latitude in decimal degree</span>
+<span class="sd">        sensor (str): Landsat sensor to query data from. Must be one of &#39;LT4&#39;,</span>
+<span class="sd">            &#39;LT5&#39;, &#39;LE7&#39;, &#39;LC8&#39;</span>
+<span class="sd">        tiers (list): List of tiers to order. ``&#39;T1&#39;`` corresponds to tiers 1.</span>
+<span class="sd">            Default is ``[&#39;T1&#39;, &#39;T2&#39;]``</span>
+<span class="sd">        start (datetime.datetime): Start date</span>
+<span class="sd">        end (datetime.datetime): Optional end date; automatically set as today if unset</span>
+<span class="sd">        radius (float): Optional radius around center point in meters. If unset,</span>
+<span class="sd">            time-series of a single pixel are queried. Otherwise a reducer is used</span>
+<span class="sd">            to spatially aggregate the pixels intersecting the circular feature</span>
+<span class="sd">            built.</span>
+<span class="sd">        feature (dict): Optional dictionary representation of a polygon feature</span>
+<span class="sd">            in longlat CRS. If unset, time-series of a single pixel are queried.</span>
+<span class="sd">            Otherwise a reducer is used to spatially aggregate the pixels intersecting</span>
+<span class="sd">            the given feature.</span>
+<span class="sd">        bands (list): List of Landsat band names. Optional, defaults to</span>
+<span class="sd">            [&#39;B1&#39;, &#39;B2&#39;, &#39;B3&#39;, &#39;B4&#39;, &#39;B5&#39;, &#39;B7&#39;] in the case of LC8 sensor and to</span>
+<span class="sd">            [&#39;B1&#39;, &#39;B2&#39;, &#39;B3&#39;, &#39;B4&#39;, &#39;B5&#39;, &#39;B7&#39;] otherwise.</span>
+<span class="sd">        stats (str): Spatial aggregation function to use. Only relevant</span>
+<span class="sd">            if a radius value is set.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary representation of the json data returned by the gee platform.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import geextract</span>
+<span class="sd">        &gt;&gt;&gt; from pprint import pprint</span>
+<span class="sd">        &gt;&gt;&gt; from datetime import datetime</span>
+
+<span class="sd">        &gt;&gt;&gt; lon = -89.8107197</span>
+<span class="sd">        &gt;&gt;&gt; lat = 20.4159611</span>
+
+<span class="sd">        &gt;&gt;&gt; out = geextract.ts_extract(lon=lon, lat=lat, sensor=&#39;LE7&#39;, start=datetime(1980, 1, 1, 0, 0),</span>
+<span class="sd">        &gt;&gt;&gt;                            radius=500)</span>
+<span class="sd">        &gt;&gt;&gt; pprint(out)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define some internal functions to be mapped over imageCollections</span>
+    <span class="k">def</span> <span class="nf">_mask_clouds</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cloud masking function&quot;&quot;&quot;</span>
+        <span class="c1"># collection 1 cloud masking example</span>
+        <span class="c1"># https://code.earthengine.google.com/52e39cc00de3471c905509e374c52284</span>
+
+        <span class="c1"># Pre collecction masking example</span>
+        <span class="c1"># https://code.earthengine.google.com/37ffd688d1b2d2c977fa5c536a023356</span>
+        <span class="c1"># collection must be a variable of the parent environment</span>
+        <span class="n">clear</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;pixel_qa&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bitwiseAnd</span><span class="p">(</span><span class="mh">0x2</span><span class="p">)</span><span class="o">.</span><span class="n">neq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">valid_range_mask</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">gte</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">And</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">lte</span><span class="p">(</span><span class="mi">10000</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">updateMask</span><span class="p">(</span><span class="n">clear</span><span class="p">)</span><span class="o">.</span><span class="n">updateMask</span><span class="p">(</span><span class="n">valid_range_mask</span><span class="p">)</span>
+
+    <span class="c1"># Check inputs</span>
+    <span class="k">if</span> <span class="n">sensor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LT4&#39;</span><span class="p">,</span> <span class="s1">&#39;LT5&#39;</span><span class="p">,</span> <span class="s1">&#39;LC8&#39;</span><span class="p">,</span> <span class="s1">&#39;LE7&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown sensor (Must be one of LT4, LT5, LE7, LC8)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bands</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;LT4&#39;</span><span class="p">,</span> <span class="s1">&#39;LT5&#39;</span><span class="p">,</span> <span class="s1">&#39;LE7&#39;</span><span class="p">]:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B1&#39;</span><span class="p">,</span> <span class="s1">&#39;B2&#39;</span><span class="p">,</span> <span class="s1">&#39;B3&#39;</span><span class="p">,</span> <span class="s1">&#39;B4&#39;</span><span class="p">,</span> <span class="s1">&#39;B5&#39;</span><span class="p">,</span> <span class="s1">&#39;B7&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;B2&#39;</span><span class="p">,</span> <span class="s1">&#39;B3&#39;</span><span class="p">,</span> <span class="s1">&#39;B4&#39;</span><span class="p">,</span> <span class="s1">&#39;B5&#39;</span><span class="p">,</span> <span class="s1">&#39;B6&#39;</span><span class="p">,</span> <span class="s1">&#39;B7&#39;</span><span class="p">]</span>
+    <span class="n">sensor</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(LC|LT|LE)(\d</span><span class="si">{1}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\g&lt;1&gt;0\g&lt;2&gt;&#39;</span><span class="p">,</span> <span class="n">sensor</span><span class="p">)</span>
+    <span class="n">collection_name_template</span> <span class="o">=</span> <span class="s1">&#39;LANDSAT/</span><span class="si">%s</span><span class="s1">/C01/</span><span class="si">%%</span><span class="s1">s_SR&#39;</span> <span class="o">%</span> <span class="n">sensor</span>
+    <span class="c1"># Iterate over tiers to load and merge all corresponding image collections</span>
+    <span class="n">landsat_ic</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">ImageCollection</span><span class="p">(</span><span class="n">collection_name_template</span> <span class="o">%</span> <span class="n">tiers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">tier</span> <span class="ow">in</span> <span class="n">tiers</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">tier_ic</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">ImageCollection</span><span class="p">(</span><span class="n">collection_name_template</span> <span class="o">%</span> <span class="n">tier</span><span class="p">)</span>
+        <span class="n">landsat_ic</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">ImageCollection</span><span class="p">(</span><span class="n">landsat_ic</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tier_ic</span><span class="p">))</span>
+    <span class="c1"># Prepare image collection</span>
+    <span class="n">landsat</span> <span class="o">=</span> <span class="n">landsat_ic</span><span class="o">.</span>\
+            <span class="n">filterDate</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">opt_end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_mask_clouds</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">feature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Define spatial aggregation function</span>
+        <span class="k">if</span> <span class="n">stats</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+            <span class="n">fun</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Reducer</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">stats</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+            <span class="n">fun</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Reducer</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">stats</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+            <span class="n">fun</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Reducer</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">stats</span> <span class="o">==</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span>
+            <span class="n">fun</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Reducer</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown spatial aggregation function. Must be one of mean, median, max, or min&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">feature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Geometry</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">feature</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;coordinates&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># Geometry defined by point and radius</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Geometry</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+        <span class="c1"># Define function to map over imageCollection to perform spatial aggregation </span>
+        <span class="k">def</span> <span class="nf">_reduce_region</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Spatial aggregation function for a single image and a polygon feature&quot;&quot;&quot;</span>
+            <span class="n">stat_dict</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">reduceRegion</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+            <span class="c1"># FEature needs to be rebuilt because the backend doesn&#39;t accept to map</span>
+            <span class="c1"># functions that return dictionaries</span>
+            <span class="k">return</span> <span class="n">ee</span><span class="o">.</span><span class="n">Feature</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">stat_dict</span><span class="p">)</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="n">landsat</span><span class="o">.</span><span class="n">filterBounds</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_reduce_region</span><span class="p">)</span><span class="o">.</span><span class="n">getInfo</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">simplify</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Extraction with a point, no spatial aggregation, etc</span>
+        <span class="n">geometry</span> <span class="o">=</span> <span class="n">ee</span><span class="o">.</span><span class="n">Geometry</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">landsat</span><span class="o">.</span><span class="n">filterBounds</span><span class="p">(</span><span class="n">geometry</span><span class="p">)</span><span class="o">.</span><span class="n">getRegion</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">getInfo</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">dictify</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="c1"># pop longitude and lattitude keys from dict collection so that band aliases can</span>
+        <span class="c1"># be replaced by their color names</span>
+        <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">out</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">out</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">out</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="simplify"><a class="viewcode-back" href="../api/index.html#geextract.simplify">[docs]</a><span class="k">def</span> <span class="nf">simplify</span><span class="p">(</span><span class="n">fc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Take a feature collection, as returned by mapping a reducer to a ImageCollection,</span>
+<span class="sd">        and reshape it into a simpler list of dictionaries</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fc (dict): Dictionary representation of a feature collection, as returned</span>
+<span class="sd">            by mapping a reducer to an ImageCollection</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; fc = {u&#39;columns&#39;: {},</span>
+<span class="sd">        ...       u&#39;features&#39;: [{u&#39;geometry&#39;: None,</span>
+<span class="sd">        ...                      u&#39;id&#39;: u&#39;LC81970292013106&#39;,</span>
+<span class="sd">        ...                      u&#39;properties&#39;: {u&#39;B1&#39;: 651.8054424353023,</span>
+<span class="sd">        ...                                      u&#39;B2&#39;: 676.6018246419446},</span>
+<span class="sd">        ...                      u&#39;type&#39;: u&#39;Feature&#39;},</span>
+<span class="sd">        ...                     {u&#39;geometry&#39;: None,</span>
+<span class="sd">        ...                      u&#39;id&#39;: u&#39;LC81970292013122&#39;,</span>
+<span class="sd">        ...                      u&#39;properties&#39;: {u&#39;B1&#39;: 176.99323997958842,</span>
+<span class="sd">        ...                                      u&#39;B2&#39;: 235.83196553144882},</span>
+<span class="sd">        ...                      u&#39;type&#39;: u&#39;Feature&#39;}]}</span>
+<span class="sd">        &gt;&gt;&gt; simplify(fc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">feature2dict</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">feature2dict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fc</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="dictify"><a class="viewcode-back" href="../api/index.html#geextract.dictify">[docs]</a><span class="k">def</span> <span class="nf">dictify</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build a list of dictionaries from a list of lists as returned by running</span>
+<span class="sd">        getRegion on an Image collection</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (list): A list of list. First list element contain the keys while following</span>
+<span class="sd">            list elements contain values.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; l = [[u&#39;id&#39;, u&#39;B1&#39;, u&#39;B2&#39;, u&#39;B3&#39;, u&#39;B7&#39;],</span>
+<span class="sd">        ...      [u&#39;LC81970292013106&#39;, 649, 683, 910, 1365],</span>
+<span class="sd">        ...      [u&#39;LC81970292013122&#39;, 140, 191, 521, 965]]</span>
+<span class="sd">        &gt;&gt;&gt; dictify(l)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">values</span><span class="p">))</span> <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="relabel"><a class="viewcode-back" href="../api/index.html#geextract.relabel">[docs]</a><span class="k">def</span> <span class="nf">relabel</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span> <span class="n">sensor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rename the keys of each element of a list of dictionaries</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dl (list): List of dictionaries</span>
+<span class="sd">        sensor (str): Landsat sensor to which belong the data. Must be one of</span>
+<span class="sd">            &#39;LT4&#39;, &#39;LT5&#39;, &#39;LE7&#39; or &#39;LC8&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">change_keys</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">dr</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">dl_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">change_keys</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">BANDS_TO_COLORS</span><span class="p">[</span><span class="n">sensor</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dl</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">dl_out</span></div>
+
+
+<div class="viewcode-block" id="date_append"><a class="viewcode-back" href="../api/index.html#geextract.date_append">[docs]</a><span class="k">def</span> <span class="nf">date_append</span><span class="p">(</span><span class="n">dl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add time key to each element of a list of dictionaries</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dl (list): List of dictionaries, each dictionary should at least contain</span>
+<span class="sd">            the key &#39;id&#39; in which a classic Landsat scene ID parsable by get_date</span>
+<span class="sd">            is stored.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of dictionaries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Add time key to each dict of dl</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dl</span><span class="p">:</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time</span> <span class="o">=</span> <span class="n">get_date</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">dl</span></div>
+
+
+<div class="viewcode-block" id="dictlist2sqlite"><a class="viewcode-back" href="../api/index.html#geextract.dictlist2sqlite">[docs]</a><span class="k">def</span> <span class="nf">dictlist2sqlite</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">sensor</span><span class="p">,</span> <span class="n">db_src</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a list of dictionaries to a sqlite database</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dl (list): List of dictionaries</span>
+<span class="sd">        db_src (str): Path an sqlite database (created in case it does not exist)</span>
+<span class="sd">        table (str): Name of database table to write data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        This function is used for its side effect of writing data to a database;</span>
+<span class="sd">            it does not return anything</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span>
+    <span class="c1"># Drop any row that contain no-data</span>
+    <span class="c1"># TODO: Filter only row for which all bands are Nan</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;sensor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sensor</span>
+    <span class="n">df2</span><span class="p">[</span><span class="s1">&#39;site&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site</span>
+    <span class="n">con</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_src</span><span class="p">)</span>
+    <span class="n">df2</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">con</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Loïc Dutrieux
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
