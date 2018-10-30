@@ -5,13 +5,14 @@ import argparse
 from datetime import datetime
 from geextract import ts_extract, relabel, date_append, dictlist2sqlite
 
-def main(lon, lat, sensor, begin, end, radius, stats, db, table, site):
+def main(lon, lat, sensor, begin, end, radius, stats, db, table, site,
+         tiers):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
     # Extract data
     dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
-                           radius=radius, stats=stats)
+                           radius=radius, stats=stats, tiers=tiers)
     print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
     # Prepare list of dictories ()
     dict_list_1 = relabel(dict_list_0, sensor)
@@ -35,6 +36,9 @@ Example usage
 gee_extract.py -s LT5 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
 gee_extract.py -s LE7 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
 gee_extract.py -s LC8 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1
+
+# Extract only tier 1 data for LC8
+gee_extract.py -s LC8 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/gee_db.sqlite -site uxmal -table col_1 --tiers T1
 """
 
 
@@ -78,6 +82,12 @@ gee_extract.py -s LC8 -b 1980-01-01 -lon -89.8107 -lat 20.4159 -r 500 -db /tmp/g
     parser.add_argument('-stats', '--stats', required=False,
                         help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
     parser.set_defaults(stats='mean')
+
+    parser.add_argument('-t', '--tiers', required=False,
+                        nargs='*',
+                        type=str,
+                        default=['T1', 'T2'],
+                        help='Tiers to order (T1: highest quality, defaults to T1 and T2)')
 
     parsed_args = parser.parse_args()
 

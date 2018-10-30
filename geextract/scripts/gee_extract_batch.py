@@ -6,7 +6,7 @@ from datetime import datetime
 import csv
 from geextract import ts_extract, dictlist2sqlite, relabel, date_append
 
-def main(file, sensor, begin, end, radius, stats, db, table):
+def main(file, sensor, begin, end, radius, stats, db, table, tiers):
     # Parse time string into datetime object
     begin = datetime.strptime(begin, '%Y-%m-%j')
     end = datetime.strptime(end, '%Y-%m-%j')
@@ -19,8 +19,9 @@ def main(file, sensor, begin, end, radius, stats, db, table):
                 lat = float(line[1])
                 site = line[2]
                 # Extract data
-                dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor, start=begin, end=end,
-                                       radius=radius, stats=stats)
+                dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor,
+                                         start=begin, end=end, radius=radius,
+                                         stats=stats, tiers=tiers)
                 print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
                 # Prepare list of dictories ()
                 dict_list_1 = relabel(dict_list_0, sensor)
@@ -49,6 +50,9 @@ echo "4.7174,44.7814,rompon\\n-149.4260,-17.6509,tahiti" > site_list.txt
 gee_extract_batch.py site_list.txt -b 1984-01-01 -s LT5 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
 gee_extract_batch.py site_list.txt -b 1984-01-01 -s LE7 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
 gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts
+
+# Only Tier 1 for LC8
+gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.sqlite -table landsat_ts --tiers T1
 """
 
 
@@ -82,6 +86,12 @@ gee_extract_batch.py site_list.txt -b 1984-01-01 -s LC8 -r 500 -db /tmp/gee_db.s
     parser.add_argument('-stats', '--stats', required=False,
                         help='Spatial aggregation function, one of mean (default), median, max or min. Only relevant if a radius value is provided')
     parser.set_defaults(stats='mean')
+
+    parser.add_argument('-t', '--tiers', required=False,
+                        nargs='*',
+                        type=str,
+                        default=['T1', 'T2'],
+                        help='Tiers to order (T1: highest quality, defaults to T1 and T2)')
 
     parsed_args = parser.parse_args()
 
