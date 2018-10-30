@@ -60,8 +60,9 @@ def get_date(filename):
     return d
 
 
-def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), radius = None,
-               feature = None, bands = None, stats = 'mean'):
+def ts_extract(sensor, start, tiers = ['T1', 'T2'], lon = None, lat = None,
+               end = datetime.today(), radius = None, feature = None,
+               bands = None, stats = 'mean'):
     """Perform a spatio temporal query to extract Landsat surface reflectance data
         from gee
 
@@ -70,6 +71,8 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
         lat (float): Center latitude in decimal degree
         sensor (str): Landsat sensor to query data from. Must be one of 'LT4',
             'LT5', 'LE7', 'LC8'
+        tiers (list): List of tiers to order. ``'T1'`` corresponds to tiers 1.
+            Default is ``['T1', 'T2']``
         start (datetime.datetime): Start date
         end (datetime.datetime): Optional end date; automatically set as today if unset
         radius (float): Optional radius around center point in meters. If unset,
@@ -124,9 +127,14 @@ def ts_extract(sensor, start, lon = None, lat = None, end = datetime.today(), ra
         else:
             bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']
     sensor = re.sub(r'(LC|LT|LE)(\d{1})', r'\g<1>0\g<2>', sensor)
-    sensor = 'LANDSAT/%s/C01/T1_SR' % sensor
+    collection_name_template = 'LANDSAT/%s/C01/%%s_SR' % sensor
+    # Iterate over tiers to load and merge all corresponding image collections
+    landsat_ic = ee.ImageCollection(collection_name_template % tiers[0])
+    for tier in tiers[1:]:
+        tier_ic = ee.ImageCollection(collection_name_template % tier)
+        landsat_ic = ee.ImageCollection(landsat_ic.merge(tier_ic))
     # Prepare image collection
-    landsat = ee.ImageCollection(sensor).\
+    landsat = landsat_ic.\
             filterDate(start=start, opt_end=end)\
             .map(_mask_clouds)\
             .select(bands)
