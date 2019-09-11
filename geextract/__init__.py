@@ -84,7 +84,7 @@ def ts_extract(sensor, start, tiers = ['T1', 'T2'], lon = None, lat = None,
             Otherwise a reducer is used to spatially aggregate the pixels intersecting
             the given feature.
         bands (list): List of Landsat band names. Optional, defaults to
-            ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] in the case of LC8 sensor and to
+            ['B2', 'B3', 'B4', 'B5', 'B6', 'B7'] in the case of LC8 sensor and to
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B7'] otherwise.
         stats (str): Spatial aggregation function to use. Only relevant
             if a radius value is set.
