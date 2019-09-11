@@ -22,7 +22,7 @@ def main(file, sensor, begin, end, radius, stats, db, table, tiers):
                 dict_list_0 = ts_extract(lon=lon, lat=lat, sensor=sensor,
                                          start=begin, end=end, radius=radius,
                                          stats=stats, tiers=tiers)
-                print('Extracted %d records from Google Eath Engine' % len(dict_list_0))
+                print('Extracted %d records from Google Earth Engine' % len(dict_list_0))
                 # Prepare list of dictories ()
                 dict_list_1 = relabel(dict_list_0, sensor)
                 dict_list_2 = date_append(dict_list_1)
